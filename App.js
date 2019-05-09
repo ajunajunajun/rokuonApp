@@ -3,20 +3,29 @@ import { StyleSheet, Text, View, Button } from 'react-native';
 import { Audio } from 'expo';
 
 export default class App extends React.Component {
+  constructor(props){
+    super(props);
+    this.state = {
+    }
+  }
   componentWillMount() {
-    this._init()
+    this._init();
   }
   render() {
     return (
       <View style={styles.container}>
         <Text>Open up App.js to start working on your app!</Text>
         <Button
-          onPress={this._recStart}
-          title="start"
+          onPress={this._soundStart}
+          title="soundStart"
         />
         <Button
-          onPress={this._recStop}
-          title="stop"
+          onPress={this._recordStart}
+          title="recordStart"
+        />
+        <Button
+          onPress={this._recordStop}
+          title="recordStop"
         />
       </View>
     );
@@ -24,33 +33,43 @@ export default class App extends React.Component {
 
   _init = async () => {
     try {
-      await Audio.setAudioModeAsync ({
+      await Audio.setAudioModeAsync({
         allowsRecordingIOS: true,
-        interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
         playsInSilentModeIOS: true,
+        interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
         shouldDuckAndroid: true,
         interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
       });
     } catch (error) {
-      alert('initError')
+      alert(error);
     }
   }
-  _recStart = async () => {
-    const recording = new Audio.Recording();
+  _soundStart = async () => {
+    const soundObject = new Audio.sound();
     try {
-      await recording.prepareToRecordAsync(Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY);
-      await recording.startAsync();
+      await soundObject.loadAsync(require('./assets/sounds/sample.mp3'));
+      await soundObject.playAsync();
       alert('You are now recording!');
     } catch (error) {
-      alert('startError');
+      alert('soundStartError');
     }
   }
-  _recStop = async () => {
+  _recordStart = async () => {
+    const recordObject = new Audio.Recording();
     try {
-      await rocording.stopAndUnloadAsync();
+      await recordObject.prepareToRecordAsync(Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY);
+      await recordObject.startAsync();
+      alert('You are now recording!');
+    } catch (error) {
+      alert('recordStartError');
+    }
+  }
+  _recordStop = async () => {
+    try {
+      await recordObject.stopAndUnloadAsync();
       alert('Stop the recording!');
     } catch (error) {
-      alert('stopError');
+      alert('recordStopError');
     }
   }
 }
